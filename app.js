@@ -3,6 +3,8 @@ const app = express()
 const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
+const Url = require('./models/url')
+const generateRandomString = require('./shorten')
 
 //setting body-parser
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -16,7 +18,7 @@ app.use(express.static('public'))
 
 //setting mongodb
 mongoose.set('debug', true)
-mongoose.connect('mongodb://localhost/', { useNewUrlParser: true, useCreateIndex: true })
+mongoose.connect('mongodb://localhost/url', { useNewUrlParser: true, useCreateIndex: true })
 
 const db = mongoose.connection
 
@@ -32,11 +34,36 @@ db.once('open', () => {
 
 //setting routers
 app.get('/', (req, res) => {
-
+  res.render('index')
 })
 
-app.post('/', (req, res) => {
 
+app.post('/', (req, res) => {
+  const { url } = req.body
+
+  Url.findOne({ originalUrl: url }).then(url => {
+    if (url) {
+      console.log('這個網址已經產生過短網址了')
+      res.render('index', { url })
+    } else {
+      const newUrl = new Url({ originalUrl: req.body.url, shortenUrl: generateRandomString() })
+
+      newUrl.save().then(url => {
+        console.log(url.shortenUrl)
+        res.redirect(`/${url.shortenUrl}`)
+      })
+        .catch(err => console.log(err))
+    }
+  })
+})
+
+
+app.get('/:shortenUrl', (req, res) => {
+  Url.findOne({ shortenUrl: req.params.shortenUrl }).then(url => {
+    createUrl = 'http://localhost:3000/' + url.shortenUrl
+    res.render('shorten', { url, createUrl })
+  })
+    .catch(err => console.log(err))
 })
 
 

@@ -19,7 +19,7 @@ app.use(express.static('public'))
 
 //setting mongodb
 mongoose.set('debug', true)
-mongoose.connect('mongodb://localhost/url', { useNewUrlParser: true, useCreateIndex: true })
+mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost/url', { useNewUrlParser: true, useCreateIndex: true })
 
 const db = mongoose.connection
 
@@ -80,6 +80,6 @@ app.get('/:shortenUrl', (req, res) => {
 })
 
 
-app.listen(3000, () => {
+app.listen(process.env.PORT || 3000, () => {
   console.log('Express is running on http://localhost:3000')
 })

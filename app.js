@@ -5,6 +5,7 @@ const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const Url = require('./models/url')
 const generateRandomString = require('./shorten')
+const flash = require('connect-flash')
 
 //setting body-parser
 app.use(bodyParser.urlencoded({ extended: true }))
@@ -32,6 +33,10 @@ db.once('open', () => {
   console.log('mongodb connected!')
 })
 
+//connect-flash
+app.use(flash())
+
+
 //setting routers
 app.get('/', (req, res) => {
   res.render('index')
@@ -41,10 +46,12 @@ app.get('/', (req, res) => {
 app.post('/', (req, res) => {
   const { url } = req.body
 
+  let errors = []
+
   Url.findOne({ originalUrl: url }).then(url => {
     if (url) {
-      console.log('這個網址已經產生過短網址了')
-      res.render('index', { url })
+      errors.push({ message: '這個網址已經產生過短網址!' })
+      res.render('index', { errors, url })
     } else {
       const newUrl = new Url({ originalUrl: req.body.url, shortenUrl: generateRandomString() })
 

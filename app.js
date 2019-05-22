@@ -55,11 +55,17 @@ app.post('/', (req, res) => {
     } else {
       const newUrl = new Url({ originalUrl: req.body.url, shortenUrl: generateRandomString() })
 
-      newUrl.save().then(url => {
-        console.log(url.shortenUrl)
-        res.redirect(`/${url.shortenUrl}`)
+      Url.findOne({ shortenUrl: newUrl.shortenUrl }).then(url => {
+        if (url) {
+          return newUrl
+        } else {
+          newUrl.save().then(url => {
+            console.log(url.shortenUrl)
+            res.redirect(`/${url.shortenUrl}`)
+          })
+            .catch(err => console.log(err))
+        }
       })
-        .catch(err => console.log(err))
     }
   })
 })

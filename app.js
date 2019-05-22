@@ -7,6 +7,11 @@ const Url = require('./models/url')
 const generateRandomString = require('./shorten')
 const flash = require('connect-flash')
 
+//dotenv
+if (process.env.NODE_ENV !== 'production') {
+  require('dotenv').config()
+}
+
 //setting body-parser
 app.use(bodyParser.urlencoded({ extended: true }))
 
@@ -19,7 +24,7 @@ app.use(express.static('public'))
 
 //setting mongodb
 mongoose.set('debug', true)
-mongoose.connect(process.env.MONGODB_URL || 'mongodb://localhost/url', { useNewUrlParser: true, useCreateIndex: true })
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost/url', { useNewUrlParser: true, useCreateIndex: true })
 
 const db = mongoose.connection
 

@@ -1,3 +1,5 @@
+const Url = require('./models/url')
+
 function generateRandomString() {
   const length = 5
   const charset = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789'
@@ -10,4 +12,27 @@ function generateRandomString() {
   return url
 }
 
-module.exports = generateRandomString
+const check = shorten => {
+  Url.findOne({ shortenUrl: shorten }).then(url => {
+    if (url) {
+      return false
+    } else {
+      return true
+    }
+  })
+    .catch(err => console.log(err))
+}
+
+const shortenUrl = url => {
+  const shorten = generateRandomString()
+  const checkUrl = check(shorten)
+
+  if (checkUrl === false) {
+    shortenUrl(url)
+  } else {
+    return shorten
+  }
+}
+
+
+module.exports = shortenUrl

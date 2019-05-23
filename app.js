@@ -4,7 +4,7 @@ const exphbs = require('express-handlebars')
 const bodyParser = require('body-parser')
 const mongoose = require('mongoose')
 const Url = require('./models/url')
-const generateRandomString = require('./shorten')
+const shortenUrl = require('./shorten')
 const flash = require('connect-flash')
 
 //dotenv
@@ -58,28 +58,24 @@ app.post('/', (req, res) => {
       errors.push({ message: '這個網址已經產生過短網址!' })
       res.render('index', { errors, url })
     } else {
-      const newUrl = new Url({ originalUrl: req.body.url, shortenUrl: generateRandomString() })
+      const newUrl = new Url({ originalUrl: req.body.url, shortenUrl: shortenUrl() })
 
-      Url.findOne({ shortenUrl: newUrl.shortenUrl }).then(url => {
-        if (url) {
-          return newUrl
-        } else {
-          newUrl.save().then(url => {
-            console.log(url.shortenUrl)
-            res.redirect(`/${url.shortenUrl}`)
-          })
-            .catch(err => console.log(err))
-        }
+      newUrl.save().then(url => {
+        console.log(url.shortenUrl)
+        createUrl = 'http://localhost:3000/' + url.shortenUrl
+        res.render('index', { createUrl })
       })
+        .catch(err => console.log(err))
     }
   })
+    .catch(err => console.log(err))
 })
 
 
 app.get('/:shortenUrl', (req, res) => {
+
   Url.findOne({ shortenUrl: req.params.shortenUrl }).then(url => {
-    createUrl = 'http://localhost:3000/' + url.shortenUrl
-    res.render('shorten', { url, createUrl })
+    res.redirect(url.originalUrl)
   })
     .catch(err => console.log(err))
 })

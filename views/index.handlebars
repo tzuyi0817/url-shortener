@@ -1,8 +1,8 @@
 <div class="row mt-5">
   <div class="col-md-6 m-auto">
     <div class="card card-body">
-      <h3 class="text">短網址創建成功！ 點擊連結您的網站：</h3>
       {{#if createUrl}}
+      <h3 class="text">短網址創建成功！ 點擊連結您的網站：</h3>
       <h3><a href="{{createUrl}}">{{createUrl}}</a></h3>
       {{/if}}
     </div>
@@ -18,6 +18,11 @@
 
         <button type="submit" class="btn btn-primary mt-5">shorten!</button>
       </form>
+
+      {{#if existUrl}}
+      <h3 class="text mt-5">已創建過的短網址！ 點擊連結您的網站：</h3>
+      <h3><a href="{{existUrl}}">{{existUrl}}</a></h3>
+      {{/if}}
     </div>
   </div>
 </div>

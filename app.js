@@ -56,7 +56,9 @@ app.post('/', (req, res) => {
   Url.findOne({ originalUrl: url }).then(url => {
     if (url) {
       errors.push({ message: '這個網址已經產生過短網址!' })
-      res.render('index', { errors, url })
+      const existUrl = 'http://localhost:3000/' + url.shortenUrl
+      console.log(existUrl)
+      res.render('index', { errors, url, existUrl })
     } else {
       const newUrl = new Url({ originalUrl: req.body.url, shortenUrl: shortenUrl() })
 

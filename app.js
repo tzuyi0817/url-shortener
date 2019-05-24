@@ -56,7 +56,7 @@ app.post('/', (req, res) => {
   Url.findOne({ originalUrl: url }).then(url => {
     if (url) {
       errors.push({ message: '這個網址已經產生過短網址!' })
-      const existUrl = 'http://localhost:3000/' + url.shortenUrl
+      const existUrl = 'https://desolate-oasis-46858.herokuapp.com/' + url.shortenUrl
       console.log(existUrl)
       res.render('index', { errors, url, existUrl })
     } else {
@@ -64,7 +64,7 @@ app.post('/', (req, res) => {
 
       newUrl.save().then(url => {
         console.log(url.shortenUrl)
-        createUrl = 'http://localhost:3000/' + url.shortenUrl
+        const createUrl = 'https://desolate-oasis-46858.herokuapp.com/' + url.shortenUrl
         res.render('index', { createUrl })
       })
         .catch(err => console.log(err))
